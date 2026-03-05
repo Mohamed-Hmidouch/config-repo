@@ -1,4 +1,4 @@
 service:
-  name: Service prod here 1
+  name: Service prod here 2
   db:
     password: '{cipher}da45a27eee9ead4f53082723c31d50a889ce7a332a1e13e64c3d8559639bae48'
