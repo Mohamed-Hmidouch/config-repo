@@ -1,3 +1,4 @@
+// See DESIGN_RULES.md before editing this file.
 import React from 'react';
 import { Card } from '../ui/Card';
 import { DynamicField } from './DynamicField';

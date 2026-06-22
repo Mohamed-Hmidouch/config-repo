@@ -1,3 +1,4 @@
+// See DESIGN_RULES.md before editing this file.
 import React from 'react';
 import { Card } from '../ui/Card';
 import { Buildings, Envelope, Boat } from '@phosphor-icons/react';
@@ -18,17 +19,18 @@ const PartyCard: React.FC<{
   if (!name) return null;
 
   return (
-    <div className="party-card">
-      <div className="party-card__header">
-        <span className="party-card__icon">{icon}</span>
-        <span className="party-card__title">{title}</span>
+    <div className="rounded bg-paper border border-border-light px-4 py-3">
+      <div className="flex items-center gap-2 mb-2">
+        <span className="text-accent shrink-0">{icon}</span>
+        <span className="text-xs font-medium text-ink-muted uppercase tracking-wide">
+          {title}
+        </span>
       </div>
-      <p className="party-card__name">{name}</p>
+      <p className="text-sm font-normal text-ink">{name}</p>
       {details?.map((d) =>
         d.value ? (
-          <p key={d.label} className="party-card__detail">
-            <span className="party-card__detail-label">{d.label} :</span>{' '}
-            {d.value}
+          <p key={d.label} className="text-xs text-ink-muted mt-1">
+            <span className="font-medium">{d.label} :</span> {d.value}
           </p>
         ) : null
       )}
@@ -47,7 +49,7 @@ export const PartiesSection: React.FC<PartiesSectionProps> = ({
 
   return (
     <Card title="Parties" icon={<Buildings size={18} weight="duotone" />}>
-      <div className="parties-grid">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
         <PartyCard
           title="Fournisseur"
           icon={<Buildings size={16} weight="duotone" />}

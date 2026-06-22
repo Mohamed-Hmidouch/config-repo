@@ -1,3 +1,4 @@
+// See DESIGN_RULES.md before editing this file.
 import React from 'react';
 import { humanizeKey, formatMoney } from '../../utils/formatters';
 import { isMonetary, isLongText, isNestedObject, isArray } from '../../utils/typeGuards';
@@ -27,11 +28,11 @@ export const DynamicField: React.FC<DynamicFieldProps> = ({
   // ── Nested object → recursive rendering ──
   if (isNestedObject(value)) {
     return (
-      <div className="dynamic-field dynamic-field--nested" style={{ '--depth': depth } as React.CSSProperties}>
-        <span className="dynamic-field__label dynamic-field__label--group">
+      <div className={depth > 0 ? 'pl-3 border-l border-border-light' : ''}>
+        <span className="block text-xs font-medium text-ink-muted uppercase tracking-wide mb-1.5">
           {humanLabel}
         </span>
-        <div className="dynamic-field__nested">
+        <div className="space-y-2">
           {Object.entries(value).map(([k, v]) => (
             <DynamicField
               key={k}
@@ -49,9 +50,11 @@ export const DynamicField: React.FC<DynamicFieldProps> = ({
   // ── Array → list of items ──
   if (isArray(value)) {
     return (
-      <div className="dynamic-field dynamic-field--array">
-        <span className="dynamic-field__label">{humanLabel}</span>
-        <div className="dynamic-field__array">
+      <div>
+        <span className="block text-xs font-medium text-ink-muted uppercase tracking-wide mb-1.5">
+          {humanLabel}
+        </span>
+        <div className="space-y-2 pl-3 border-l border-border-light">
           {value.map((item, i) => (
             <DynamicField
               key={i}
@@ -69,9 +72,11 @@ export const DynamicField: React.FC<DynamicFieldProps> = ({
   // ── Monetary number ──
   if (isMonetary(value)) {
     return (
-      <div className="dynamic-field dynamic-field--monetary">
-        <span className="dynamic-field__label">{humanLabel}</span>
-        <span className="dynamic-field__value dynamic-field__value--money">
+      <div className="flex items-center justify-between py-1">
+        <span className="text-xs font-medium text-ink-muted uppercase tracking-wide">
+          {humanLabel}
+        </span>
+        <span className="text-sm font-semibold text-accent tabular-nums">
           {formatMoney(value, currency)}
         </span>
       </div>
@@ -81,18 +86,24 @@ export const DynamicField: React.FC<DynamicFieldProps> = ({
   // ── Long text (clauses, conditions) ──
   if (isLongText(value)) {
     return (
-      <div className="dynamic-field dynamic-field--paragraph">
-        <span className="dynamic-field__label">{humanLabel}</span>
-        <p className="dynamic-field__text">{value}</p>
+      <div>
+        <span className="block text-xs font-medium text-ink-muted uppercase tracking-wide mb-1">
+          {humanLabel}
+        </span>
+        <p className="text-sm font-normal text-ink leading-relaxed">
+          {value}
+        </p>
       </div>
     );
   }
 
   // ── Default: string or short value ──
   return (
-    <div className="dynamic-field">
-      <span className="dynamic-field__label">{humanLabel}</span>
-      <span className="dynamic-field__value">{String(value)}</span>
+    <div className="flex items-center justify-between py-1">
+      <span className="text-xs font-medium text-ink-muted uppercase tracking-wide">
+        {humanLabel}
+      </span>
+      <span className="text-sm font-normal text-ink">{String(value)}</span>
     </div>
   );
 };

@@ -1,3 +1,4 @@
+// See DESIGN_RULES.md before editing this file.
 import React from 'react';
 import { Card } from '../ui/Card';
 import { CurrencyDollar } from '@phosphor-icons/react';
@@ -28,16 +29,27 @@ export const FinancialSummary: React.FC<FinancialSummaryProps> = ({
 
   return (
     <Card title="Resume Financier" icon={<CurrencyDollar size={18} weight="duotone" />}>
-      <div className="financial-summary">
-        {rows.map((row) => (
+      <div className="space-y-0">
+        {rows.map((row, i) => (
           <div
             key={row.label}
-            className={`financial-summary__row ${
-              row.emphasis ? 'financial-summary__row--total' : ''
-            }`}
+            className={[
+              'flex items-center justify-between py-2.5',
+              i > 0 ? 'border-t border-border-light' : '',
+            ].join(' ')}
           >
-            <span className="financial-summary__label">{row.label}</span>
-            <span className="financial-summary__value">
+            <span className={[
+              'text-xs font-medium uppercase tracking-wide',
+              row.emphasis ? 'text-ink' : 'text-ink-muted',
+            ].join(' ')}>
+              {row.label}
+            </span>
+            <span className={[
+              'tabular-nums',
+              row.emphasis
+                ? 'text-sm font-semibold text-accent'
+                : 'text-sm font-normal text-ink',
+            ].join(' ')}>
               {formatMoney(row.value!, currency)}
             </span>
           </div>

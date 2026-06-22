@@ -1,3 +1,4 @@
+// See DESIGN_RULES.md before editing this file.
 import React from 'react';
 import { Card } from '../ui/Card';
 import { Anchor, Truck, ClipboardText, Globe } from '@phosphor-icons/react';
@@ -24,13 +25,20 @@ export const LogisticsSection: React.FC<LogisticsSectionProps> = ({
 
   return (
     <Card title="Logistique" icon={<Globe size={18} weight="duotone" />}>
-      <div className="logistics-grid">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
         {fields.map((field) => (
-          <div key={field.label} className="logistics-item">
-            <span className="logistics-item__icon">{field.icon}</span>
+          <div
+            key={field.label}
+            className="flex items-start gap-2.5 rounded bg-paper border border-border-light px-4 py-3"
+          >
+            <span className="text-accent shrink-0 mt-0.5">{field.icon}</span>
             <div>
-              <span className="logistics-item__label">{field.label}</span>
-              <span className="logistics-item__value">{field.value}</span>
+              <span className="block text-xs font-medium text-ink-muted uppercase tracking-wide">
+                {field.label}
+              </span>
+              <span className="block text-sm font-normal text-ink mt-0.5">
+                {field.value}
+              </span>
             </div>
           </div>
         ))}

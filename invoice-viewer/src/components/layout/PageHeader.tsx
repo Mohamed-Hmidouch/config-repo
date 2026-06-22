@@ -1,3 +1,4 @@
+// See DESIGN_RULES.md before editing this file.
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft } from '@phosphor-icons/react';
@@ -18,25 +19,27 @@ export const PageHeader: React.FC<PageHeaderProps> = ({
   const navigate = useNavigate();
 
   return (
-    <header className="page-header">
-      <div className="page-header__left">
+    <header className="flex items-center justify-between gap-4 px-6 py-4 bg-paper border-b border-border-light font-sans">
+      <div className="flex items-center gap-3 min-w-0">
         {showBack && (
           <button
-            className="page-header__back"
+            className="flex items-center justify-center w-8 h-8 rounded text-ink-muted transition-colors hover:bg-paper-surface hover:text-ink"
             onClick={() => navigate('/')}
             aria-label="Retour a la liste"
           >
             <ArrowLeft size={18} />
           </button>
         )}
-        <div>
-          <h1 className="page-header__title">{title}</h1>
+        <div className="min-w-0">
+          <h1 className="text-lg font-semibold text-ink leading-tight truncate">
+            {title}
+          </h1>
           {subtitle && (
-            <p className="page-header__subtitle">{subtitle}</p>
+            <p className="text-sm text-ink-muted mt-0.5 truncate">{subtitle}</p>
           )}
         </div>
       </div>
-      {actions && <div className="page-header__actions">{actions}</div>}
+      {actions && <div className="flex items-center gap-2 flex-shrink-0">{actions}</div>}
     </header>
   );
 };

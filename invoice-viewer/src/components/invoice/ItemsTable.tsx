@@ -1,3 +1,4 @@
+// See DESIGN_RULES.md before editing this file.
 import React from 'react';
 import { Card } from '../ui/Card';
 import { Table } from '../ui/Table';
@@ -30,14 +31,14 @@ export const ItemsTable: React.FC<ItemsTableProps> = ({ items, currency }) => {
       header: '#',
       align: 'center' as const,
       render: (_: InvoiceItem, index: number) => (
-        <span className="items-table__index">{index + 1}</span>
+        <span className="text-xs text-ink-muted tabular-nums">{index + 1}</span>
       ),
     },
     {
       key: 'description',
       header: 'Description',
       render: (item: InvoiceItem) => (
-        <span className="items-table__desc">{item.description}</span>
+        <span className="text-sm font-normal text-ink">{item.description}</span>
       ),
     },
     {
@@ -45,7 +46,9 @@ export const ItemsTable: React.FC<ItemsTableProps> = ({ items, currency }) => {
       header: 'Quantite',
       align: 'right' as const,
       render: (item: InvoiceItem) => (
-        <span>{item.quantity?.toLocaleString('fr-FR') ?? '-'}</span>
+        <span className="text-sm font-normal text-ink tabular-nums">
+          {item.quantity?.toLocaleString('fr-FR') ?? '-'}
+        </span>
       ),
     },
     {
@@ -53,7 +56,7 @@ export const ItemsTable: React.FC<ItemsTableProps> = ({ items, currency }) => {
       header: 'Prix Unitaire',
       align: 'right' as const,
       render: (item: InvoiceItem) => (
-        <span>
+        <span className="text-sm font-normal text-ink tabular-nums">
           {item.unit_price !== null ? formatMoney(item.unit_price, currency) : '-'}
         </span>
       ),
@@ -63,7 +66,7 @@ export const ItemsTable: React.FC<ItemsTableProps> = ({ items, currency }) => {
       header: 'Total',
       align: 'right' as const,
       render: (item: InvoiceItem) => (
-        <span className="items-table__total">
+        <span className="text-sm font-semibold text-accent tabular-nums">
           {item.total_price !== null ? formatMoney(item.total_price, currency) : '-'}
         </span>
       ),
@@ -73,7 +76,7 @@ export const ItemsTable: React.FC<ItemsTableProps> = ({ items, currency }) => {
       header: 'TVA',
       align: 'right' as const,
       render: (item: InvoiceItem) => (
-        <span>
+        <span className="text-sm font-normal text-ink tabular-nums">
           {item.tax_rate !== null ? `${item.tax_rate}%` : '-'}
         </span>
       ),
@@ -85,7 +88,9 @@ export const ItemsTable: React.FC<ItemsTableProps> = ({ items, currency }) => {
       title="Lignes de Facturation"
       icon={<Package size={18} weight="duotone" />}
       headerAction={
-        <span className="items-table__count">{items.length} ligne{items.length > 1 ? 's' : ''}</span>
+        <span className="text-xs font-medium text-ink-muted">
+          {items.length} ligne{items.length > 1 ? 's' : ''}
+        </span>
       }
     >
       <Table columns={columns} data={items} />

@@ -1,3 +1,4 @@
+// See DESIGN_RULES.md before editing this file.
 import React from 'react';
 import type { InvoiceData } from '../../types/invoice';
 import { HeaderSection } from './HeaderSection';

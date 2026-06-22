@@ -15,6 +15,8 @@ import {
   WarningCircle,
   ArrowCounterClockwise,
   X,
+  FileText,
+  CaretLeft,
 } from '@phosphor-icons/react';
 
 const API_BASE = 'http://localhost:8000';
@@ -54,7 +56,7 @@ export const UploadPage: React.FC = () => {
   const handleFile = useCallback((f: File) => {
     const ext = '.' + f.name.split('.').pop()?.toLowerCase();
     if (!ALLOWED_TYPES.includes(f.type) && !ALLOWED_EXTENSIONS.includes(ext)) {
-      setError(`Format non supporte. Formats acceptes : ${ALLOWED_EXTENSIONS.join(', ')}`);
+      setError(`Unsupported format. Accepted: ${ALLOWED_EXTENSIONS.join(', ')}`);
       setState('error');
       return;
     }
@@ -111,7 +113,7 @@ export const UploadPage: React.FC = () => {
 
       if (!response.ok) {
         const data = await response.json().catch(() => null);
-        throw new Error(data?.detail || `Erreur serveur (${response.status})`);
+        throw new Error(data?.detail || `Server error (${response.status})`);
       }
 
       const data = await response.json();
@@ -124,7 +126,7 @@ export const UploadPage: React.FC = () => {
       });
       setState('success');
     } catch (err: unknown) {
-      const message = err instanceof Error ? err.message : 'Erreur inconnue';
+      const message = err instanceof Error ? err.message : 'Unknown error';
       setError(message);
       setState('error');
     }
@@ -141,92 +143,157 @@ export const UploadPage: React.FC = () => {
 
   const isProcessing = state === 'uploading' || state === 'processing';
 
-  return (
-    <div className="min-h-[calc(100vh-64px)] flex flex-col font-sans">
-      {/* Page title */}
-      <div className="mb-8">
-        <h1 className="text-[1.5rem] font-bold tracking-[-0.025em] text-zinc-50">
-          Nouvelle facture
-        </h1>
-        <p className="mt-1 text-[0.82rem] text-zinc-500">
-          Importez un PDF ou une image pour extraction automatique
-        </p>
-      </div>
+  // ── Success state ──
+  if (state === 'success' && result) {
+    return (
+      <div className="min-h-screen bg-[#F3F1EC] font-sans flex flex-col items-center justify-center p-6">
+        <div className="w-full max-w-[600px] bg-white rounded-[40px] shadow-lg overflow-hidden border border-gray-100">
+          <div className="bg-[#D97757] p-10 text-center relative text-white">
+            <div className="w-20 h-20 bg-white rounded-full flex items-center justify-center mx-auto mb-6 shadow-md text-[#D97757]">
+              <CheckCircle size={40} weight="fill" />
+            </div>
+            <h2 className="text-3xl font-bold mb-2">Extraction Successful</h2>
+            <p className="text-green-100 font-medium">Your invoice has been processed and saved securely.</p>
+          </div>
 
-      <div className="flex-1 flex flex-col items-center justify-start gap-8">
-
-        {/* Success */}
-        {state === 'success' && result && (
-          <div className="w-full max-w-lg">
-            <div className="rounded-2xl border border-emerald-500/15 bg-emerald-500/[0.04] p-8 text-center">
-              <div className="mb-5 inline-flex h-14 w-14 items-center justify-center rounded-2xl bg-emerald-500/10 ring-1 ring-emerald-500/20">
-                <CheckCircle size={28} weight="duotone" className="text-emerald-400" />
+          <div className="p-10 space-y-4">
+            <div className="flex items-center gap-4 bg-[#F5F7F6] border border-gray-100 rounded-[24px] p-4">
+              <div className="w-12 h-12 bg-white rounded-[16px] flex items-center justify-center text-gray-500 shrink-0">
+                <FileText size={24} weight="duotone" />
               </div>
-
-              <h2 className="text-center text-lg font-semibold text-zinc-100">
-                Facture extraite avec succes
-              </h2>
-              <p className="mt-1 text-center text-[0.82rem] text-zinc-500">
-                Les donnees ont ete persistees en base de donnees
-              </p>
-
-              <div className="mt-6 space-y-3 rounded-xl bg-zinc-900/60 p-5 ring-1 ring-zinc-800">
-                <div className="flex justify-between text-sm">
-                  <span className="text-zinc-500">Numero</span>
-                  <span className="font-medium text-zinc-200">{result.invoice_number || 'N/A'}</span>
-                </div>
-                <div className="flex justify-between text-sm">
-                  <span className="text-zinc-500">Fournisseur</span>
-                  <span className="font-medium text-zinc-200">{result.supplier_name || 'N/A'}</span>
-                </div>
-                <div className="flex justify-between text-sm">
-                  <span className="text-zinc-500">Montant TTC</span>
-                  <span className="font-semibold text-emerald-400 tabular-nums">
-                    {result.total_amount_incl_tax != null
-                      ? `${result.total_amount_incl_tax.toLocaleString('fr-FR', { minimumFractionDigits: 2 })} ${result.currency || ''}`
-                      : 'N/A'}
-                  </span>
-                </div>
-              </div>
-
-              <div className="mt-6 flex gap-3">
-                <button
-                  onClick={() => navigate(`/invoice/${result.id}`)}
-                  className="flex-1 flex items-center justify-center gap-2 rounded-xl bg-emerald-600 px-4 py-3 text-sm font-semibold text-white transition-all hover:bg-emerald-500 active:scale-[0.98]"
-                >
-                  Voir le detail
-                  <ArrowRight size={16} weight="bold" />
-                </button>
-                <button
-                  onClick={reset}
-                  className="flex items-center gap-2 rounded-xl bg-zinc-800 px-4 py-3 text-sm font-medium text-zinc-300 ring-1 ring-zinc-700 transition-all hover:bg-zinc-700 active:scale-[0.98]"
-                >
-                  <Plus size={16} />
-                  Nouvelle
-                </button>
+              <div className="flex-1">
+                <p className="font-bold text-[#1F2937]">Invoice Number</p>
+                <p className="text-sm font-medium text-gray-500">{result.invoice_number || 'N/A'}</p>
               </div>
             </div>
-          </div>
-        )}
 
-        {/* Upload zone */}
-        {state !== 'success' && !isProcessing && (
-          <div className="w-full max-w-lg">
+            <div className="flex items-center gap-4 bg-[#F5F7F6] border border-gray-100 rounded-[24px] p-4">
+              <div className="w-12 h-12 bg-white rounded-[16px] flex items-center justify-center text-gray-500 shrink-0">
+                <FileText size={24} weight="duotone" />
+              </div>
+              <div className="flex-1">
+                <p className="font-bold text-[#1F2937]">Supplier</p>
+                <p className="text-sm font-medium text-gray-500">{result.supplier_name || 'N/A'}</p>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-4 bg-[#F5F7F6] border border-gray-100 rounded-[24px] p-4">
+              <div className="w-12 h-12 bg-white rounded-[16px] flex items-center justify-center text-[#D97757] shrink-0">
+                <FileText size={24} weight="duotone" />
+              </div>
+              <div className="flex-1">
+                <p className="font-bold text-[#1F2937]">Total Amount</p>
+                <p className="text-sm font-medium text-gray-500">
+                  {result.total_amount_incl_tax != null
+                    ? `${result.total_amount_incl_tax.toLocaleString('en-US', { minimumFractionDigits: 2 })} ${result.currency || ''}`
+                    : 'N/A'}
+                </p>
+              </div>
+            </div>
+
+            <div className="mt-8 flex gap-4 pt-4 border-t border-dashed border-gray-200">
+              <button
+                onClick={() => navigate(`/invoice/${result.id}`)}
+                className="flex-1 bg-[#1F2937] text-white rounded-full py-4 font-bold shadow-md hover:bg-black transition-colors flex items-center justify-center gap-2"
+              >
+                Review Details <ArrowRight size={18} weight="bold" />
+              </button>
+              <button
+                onClick={reset}
+                className="w-14 h-14 bg-gray-100 text-gray-600 rounded-full flex items-center justify-center hover:bg-gray-200 transition-colors"
+              >
+                <Plus size={24} weight="bold" />
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // ── Processing state ──
+  if (isProcessing) {
+    return (
+      <div className="min-h-screen bg-[#F3F1EC] font-sans flex flex-col items-center justify-center p-6">
+        <div className="w-full max-w-[500px] bg-white rounded-[40px] shadow-lg p-12 text-center border border-gray-100">
+          <div className="w-24 h-24 bg-[#F3F1EC] rounded-full flex items-center justify-center mx-auto mb-8 relative">
+             <CircleNotch size={48} weight="bold" className="animate-spin text-[#D97757]" />
+             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-16 h-16 bg-white rounded-full flex items-center justify-center shadow-sm">
+                <Brain size={24} className="text-[#D97757]" weight="duotone" />
+             </div>
+          </div>
+
+          <h2 className="text-2xl font-bold text-[#1F2937] mb-2">
+            {state === 'uploading' ? 'Uploading...' : 'Extracting Data...'}
+          </h2>
+          <p className="text-gray-500 font-medium mb-10">Please wait while our AI engine analyzes your document.</p>
+
+          <div className="space-y-6 text-left">
+            {[
+              { label: 'Secure Transfer', done: state === 'processing', icon: <CloudArrowUp size={20} weight="bold" /> },
+              { label: 'Document Scanning', done: false, active: state === 'processing', icon: <Scan size={20} weight="bold" /> },
+              { label: 'OCR & Classification', done: false, icon: <Brain size={20} weight="bold" /> },
+            ].map((step, i) => (
+              <div key={i} className="flex items-center gap-4 bg-[#F5F7F6] p-4 rounded-[20px] border border-transparent transition-colors">
+                <div className={`w-10 h-10 rounded-full flex items-center justify-center shrink-0 ${
+                  step.done ? 'bg-[#D97757] text-white' : step.active ? 'bg-white text-[#1F2937] border-2 border-[#D97757]' : 'bg-white text-gray-400'
+                }`}>
+                  {step.done ? <CheckCircle size={20} weight="bold" /> : step.icon}
+                </div>
+                <span className={`font-bold ${step.done ? 'text-[#D97757]' : step.active ? 'text-[#1F2937]' : 'text-gray-400'}`}>
+                  {step.label}
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen bg-[#F3F1EC] font-sans flex flex-col items-center pb-20">
+      
+      <div className="w-full max-w-[1000px] px-6">
+        
+        {/* ── HEADER BAR ── */}
+        <div className="pt-12 pb-6 flex items-center justify-between mb-4">
+          <button 
+            onClick={() => navigate('/')}
+            className="w-12 h-12 bg-white rounded-2xl shadow-sm border border-gray-100 flex items-center justify-center text-[#1F2937] hover:bg-gray-50 transition-all active:scale-95"
+          >
+            <CaretLeft size={24} weight="bold" />
+          </button>
+          <div className="bg-white rounded-full px-6 py-2 shadow-sm border border-gray-100">
+            <span className="font-bold text-[#D97757] text-sm tracking-widest uppercase">Smart Upload</span>
+          </div>
+        </div>
+
+        <div className="bg-[#D97757] rounded-[40px] p-10 text-white relative overflow-hidden shadow-lg mb-10 text-center">
+          <div className="relative z-10">
+            <h1 className="text-4xl font-bold mb-4">New Document</h1>
+            <p className="text-green-100 font-medium text-lg max-w-md mx-auto">
+              Upload a PDF or Image invoice for automatic OCR data extraction.
+            </p>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          
+          {/* ── DROPZONE ── */}
+          <div className="col-span-1">
             <div
               onDrop={onDrop}
               onDragOver={onDragOver}
               onDragLeave={onDragLeave}
               onClick={() => fileInputRef.current?.click()}
-              className={`
-                group relative cursor-pointer rounded-2xl border-2 border-dashed p-10 text-center
-                transition-all duration-200
-                ${dragOver
-                  ? 'border-emerald-400/60 bg-emerald-500/[0.06] scale-[1.01]'
+              className={`group relative cursor-pointer rounded-[40px] border-4 border-dashed p-12 text-center transition-all duration-300 min-h-[400px] flex flex-col items-center justify-center shadow-sm ${
+                dragOver
+                  ? 'border-[#D97757] bg-[#D97757]/5'
                   : file
-                    ? 'border-emerald-500/25 bg-emerald-500/[0.03]'
-                    : 'border-zinc-700/60 bg-zinc-900/30 hover:border-zinc-600/60 hover:bg-zinc-900/50'
-                }
-              `}
+                    ? 'border-[#D97757]/50 bg-white'
+                    : 'border-gray-200 bg-white hover:border-[#D97757]/30'
+              }`}
             >
               <input
                 ref={fileInputRef}
@@ -236,141 +303,101 @@ export const UploadPage: React.FC = () => {
                 className="hidden"
               />
 
-              <div className={`
-                mb-4 inline-flex h-12 w-12 items-center justify-center rounded-xl transition-colors
-                ${file ? 'bg-emerald-500/10 text-emerald-400' : 'bg-zinc-800 text-zinc-500 group-hover:bg-zinc-700 group-hover:text-zinc-400'}
-              `}>
+              <div className={`w-24 h-24 rounded-[24px] flex items-center justify-center mb-6 transition-colors ${file ? 'bg-[#F3F1EC] text-[#D97757]' : 'bg-gray-100 text-gray-400 group-hover:bg-[#F3F1EC] group-hover:text-[#D97757]'}`}>
                 {file ? (
                   file.type === 'application/pdf' ? (
-                    <FilePdf size={24} weight="duotone" />
+                    <FilePdf size={48} weight="duotone" />
                   ) : (
-                    <Image size={24} weight="duotone" />
+                    <Image size={48} weight="duotone" />
                   )
                 ) : (
-                  <UploadSimple size={24} weight="duotone" />
+                  <UploadSimple size={48} weight="duotone" />
                 )}
               </div>
 
               {file ? (
                 <>
-                  <p className="text-sm font-semibold text-zinc-200">{file.name}</p>
-                  <p className="mt-1 text-xs text-zinc-500">
-                    {(file.size / 1024).toFixed(0)} Ko - Cliquez pour changer
+                  <p className="text-xl font-bold text-[#1F2937] mb-2 px-4 truncate max-w-full">{file.name}</p>
+                  <p className="text-sm font-medium text-gray-500">
+                    {(file.size / 1024).toFixed(0)} KB - Click to replace
                   </p>
                 </>
               ) : (
                 <>
-                  <p className="text-sm font-medium text-zinc-300">
-                    Glissez votre facture ici
+                  <p className="text-xl font-bold text-[#1F2937] mb-2">
+                    Drag your invoice here
                   </p>
-                  <p className="mt-1 text-xs text-zinc-600">
-                    ou cliquez pour parcourir - PDF, JPG, PNG, TIFF, WebP
+                  <p className="text-sm font-medium text-gray-500">
+                    or click to browse from device
                   </p>
                 </>
               )}
 
               {preview && (
-                <div className="mt-6 overflow-hidden rounded-xl ring-1 ring-zinc-800">
+                <div className="absolute inset-0 p-4 w-full h-full pointer-events-none opacity-20">
                   <img
                     src={preview}
-                    alt="Apercu facture"
-                    className="mx-auto max-h-44 object-contain"
+                    alt="Preview"
+                    className="w-full h-full object-contain rounded-[32px]"
                   />
                 </div>
               )}
             </div>
 
             {state === 'error' && error && (
-              <div className="mt-4 flex items-start gap-3 rounded-xl bg-red-500/[0.06] px-4 py-3 ring-1 ring-red-500/15">
-                <WarningCircle size={18} weight="duotone" className="mt-0.5 shrink-0 text-red-400" />
-                <p className="text-sm text-red-400">{error}</p>
+              <div className="mt-6 flex items-start gap-4 rounded-[24px] bg-red-50 p-6">
+                <WarningCircle size={24} weight="duotone" className="text-red-500 shrink-0" />
+                <p className="text-sm font-bold text-red-700 leading-relaxed">{error}</p>
               </div>
             )}
+          </div>
 
-            {file && state !== 'error' && (
-              <button
-                onClick={handleUpload}
-                className="mt-6 w-full flex items-center justify-center gap-2 rounded-xl bg-emerald-600 px-6 py-3.5 text-sm font-semibold text-white shadow-lg shadow-emerald-600/15 transition-all hover:bg-emerald-500 active:scale-[0.98]"
-              >
-                <CloudArrowUp size={18} weight="bold" />
-                Lancer le traitement
-              </button>
-            )}
+          {/* ── ACTION COLUMN ── */}
+          <div className="col-span-1 flex flex-col justify-center">
+            
+            <div className="bg-white rounded-[40px] shadow-sm border border-gray-100 p-10 flex flex-col items-center text-center">
+              <h3 className="text-xl font-bold text-[#1F2937] mb-4">Ready to Process</h3>
+              <p className="text-gray-500 font-medium mb-8">
+                Our engine supports PDF, JPG, PNG, TIFF, and WebP formats. Make sure the document is legible for best results.
+              </p>
 
-            {state === 'error' && file && (
-              <div className="mt-4 flex gap-3">
+              {file && state !== 'error' ? (
                 <button
                   onClick={handleUpload}
-                  className="flex-1 flex items-center justify-center gap-2 rounded-xl bg-emerald-600 px-4 py-3 text-sm font-semibold text-white transition-all hover:bg-emerald-500 active:scale-[0.98]"
+                  className="w-full bg-[#1F2937] text-white rounded-full py-5 text-lg font-bold shadow-lg hover:bg-black transition-colors flex items-center justify-center gap-3"
                 >
-                  <ArrowCounterClockwise size={16} />
-                  Reessayer
+                  <CloudArrowUp size={24} weight="bold" />
+                  Process Document
                 </button>
+              ) : state === 'error' && file ? (
+                <div className="w-full flex gap-4">
+                  <button
+                    onClick={handleUpload}
+                    className="flex-1 bg-[#D97757] text-white rounded-full py-4 font-bold shadow-md hover:bg-[#0EA5E9] transition-colors flex items-center justify-center gap-2"
+                  >
+                    <ArrowCounterClockwise size={20} /> Retry
+                  </button>
+                  <button
+                    onClick={reset}
+                    className="flex items-center justify-center gap-2 rounded-full bg-gray-100 px-6 py-4 font-bold text-gray-600 hover:bg-gray-200 transition-colors"
+                  >
+                    <X size={20} /> Cancel
+                  </button>
+                </div>
+              ) : (
                 <button
-                  onClick={reset}
-                  className="flex items-center gap-2 rounded-xl bg-zinc-800 px-4 py-3 text-sm font-medium text-zinc-400 ring-1 ring-zinc-700 transition-all hover:bg-zinc-700 active:scale-[0.98]"
+                  onClick={() => fileInputRef.current?.click()}
+                  className="w-full bg-[#D97757] text-white rounded-full py-5 text-lg font-bold shadow-lg hover:opacity-90 transition-opacity flex items-center justify-center gap-3"
                 >
-                  <X size={16} />
-                  Annuler
+                  <UploadSimple size={24} weight="bold" />
+                  Select File
                 </button>
-              </div>
-            )}
-          </div>
-        )}
-
-        {/* Processing */}
-        {isProcessing && (
-          <div className="w-full max-w-lg">
-            <div className="rounded-2xl border border-zinc-800 bg-zinc-900/40 p-10 text-center">
-              <div className="mb-6 inline-flex">
-                <CircleNotch size={40} weight="bold" className="animate-spin text-emerald-400" />
-              </div>
-
-              <p className="text-sm font-semibold text-zinc-200">
-                {state === 'uploading' ? 'Envoi du fichier...' : 'Traitement en cours...'}
-              </p>
-              <p className="mt-2 text-xs text-zinc-600">
-                {state === 'uploading'
-                  ? 'Transfert vers le serveur'
-                  : 'Analyse et extraction en cours...'}
-              </p>
-
-              <div className="mt-8 space-y-3">
-                {[
-                  { label: 'Transfert securise', done: state === 'processing', icon: <CloudArrowUp size={14} weight="bold" /> },
-                  { label: 'Numerisation du document', done: false, active: state === 'processing', icon: <Scan size={14} weight="bold" /> },
-                  { label: 'Analyse et classification', done: false, icon: <Brain size={14} weight="bold" /> },
-                  { label: 'Finalisation du dossier', done: false, icon: <Database size={14} weight="bold" /> },
-                ].map((step, i) => (
-                  <div key={i} className="flex items-center gap-3 text-left">
-                    <div className={`
-                      flex h-7 w-7 shrink-0 items-center justify-center rounded-lg
-                      ${step.done
-                        ? 'bg-emerald-500/15 text-emerald-400 ring-1 ring-emerald-500/20'
-                        : step.active
-                          ? 'bg-emerald-500/10 text-emerald-400 ring-1 ring-emerald-500/15 animate-pulse'
-                          : 'bg-zinc-800 text-zinc-600 ring-1 ring-zinc-700'
-                      }
-                    `}>
-                      {step.done ? (
-                        <CheckCircle size={14} weight="fill" />
-                      ) : (
-                        step.icon
-                      )}
-                    </div>
-                    <span className={`text-sm ${step.done ? 'text-emerald-400' : step.active ? 'text-zinc-200' : 'text-zinc-600'}`}>
-                      {step.label}
-                    </span>
-                  </div>
-                ))}
-              </div>
-
-              <div className="mt-8 rounded-lg bg-zinc-950/60 px-4 py-2.5 text-xs text-zinc-600 ring-1 ring-zinc-800">
-                {file?.name}
-              </div>
+              )}
             </div>
+
           </div>
-        )}
+
+        </div>
       </div>
     </div>
   );

@@ -1,3 +1,4 @@
+// See DESIGN_RULES.md before editing this file.
 import React, { useState } from 'react';
 import type { InvoiceData } from '../../types/invoice';
 import { PdfViewer } from './PdfViewer';
@@ -27,29 +28,31 @@ export const InvoiceInspector: React.FC<InvoiceInspectorProps> = ({ data, fileUr
 
   if (!fileUrl) {
     return (
-      <div className="inspector-error">
-        <WarningCircle size={32} className="text-zinc-500 mb-4" />
-        <p>Le document source n'est pas disponible pour cette facture.</p>
-        <p className="text-sm text-zinc-500 mt-2">Veuillez revenir a la vue classique.</p>
+      <div className="flex flex-col items-center justify-center gap-3 py-20 font-sans">
+        <WarningCircle size={32} className="text-ink-muted" />
+        <p className="text-sm text-ink">Le document source n'est pas disponible pour cette facture.</p>
+        <p className="text-xs text-ink-muted mt-1">Veuillez revenir a la vue classique.</p>
       </div>
     );
   }
 
   return (
-    <div className="invoice-inspector">
-      <div className="invoice-inspector__left">
-        <PdfViewer 
-          fileUrl={fileUrl} 
-          bboxes={bboxes} 
+    <div className="flex h-full font-sans">
+      {/* PDF à gauche */}
+      <div className="flex-1 min-w-0">
+        <PdfViewer
+          fileUrl={fileUrl}
+          bboxes={bboxes}
           highlightedIndices={highlightedIndices}
           ocrImageSize={ocrImageSize}
         />
       </div>
-      <div className="invoice-inspector__right">
-        <AttributePanel 
-          data={data} 
-          activeAttribute={activeAttribute} 
-          onAttributeSelect={handleAttributeSelect} 
+      {/* Panel à droite */}
+      <div className="w-[420px] shrink-0 bg-paper-surface border-l border-border-light overflow-y-auto">
+        <AttributePanel
+          data={data}
+          activeAttribute={activeAttribute}
+          onAttributeSelect={handleAttributeSelect}
         />
       </div>
     </div>

@@ -1,3 +1,4 @@
+// See DESIGN_RULES.md before editing this file.
 import React, { useEffect, useRef, useState } from 'react';
 import * as pdfjsLib from 'pdfjs-dist';
 // Configurer le worker pdfjs
@@ -15,64 +16,108 @@ export const PdfViewer: React.FC<PdfViewerProps> = ({ fileUrl, bboxes, highlight
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const highlightCanvasRef = useRef<HTMLCanvasElement>(null);
   const [scale, setScale] = useState(1);
+  const [error, setError] = useState<string | null>(null);
   // Canvas dimensions = the actual pixel size of the rendered PDF/image canvas
   const [canvasSize, setCanvasSize] = useState({ width: 0, height: 0 });
 
   useEffect(() => {
-    const isPdfFile = fileUrl.toLowerCase().endsWith('.pdf');
-    
-    if (isPdfFile) {
-      loadPdf();
-    } else {
-      loadImage();
+    let isActive = true;
+    let loadingTask: any = null;
+    let renderTask: any = null;
+
+    // Clear the canvas immediately on URL change to prevent showing old invoices
+    const canvas = canvasRef.current;
+    if (canvas) {
+      const ctx = canvas.getContext('2d');
+      if (ctx) ctx.clearRect(0, 0, canvas.width, canvas.height);
     }
-  }, [fileUrl]);
+    setError(null);
 
-  const loadPdf = async () => {
-    try {
-      const loadingTask = pdfjsLib.getDocument(fileUrl);
-      const pdf = await loadingTask.promise;
-      const page = await pdf.getPage(1); // Only showing first page for now
+    if (!fileUrl) return;
 
-      const viewport = page.getViewport({ scale: 1.5 });
-      setCanvasSize({ width: viewport.width, height: viewport.height });
+    // Clean the URL only for checking the extension, DO NOT mutate the fetch URL
+    // Otherwise trailing spaces in actual filenames will cause 404s!
+    const isPdfFile = fileUrl.trim().toLowerCase().endsWith('.pdf');
 
-      const canvas = canvasRef.current;
-      if (!canvas) return;
-      const context = canvas.getContext('2d');
-      if (!context) return;
+    const loadPdf = async (url: string) => {
+      try {
+        loadingTask = pdfjsLib.getDocument(url);
+        const pdf = await loadingTask.promise;
+        if (!isActive) return;
 
-      canvas.width = viewport.width;
-      canvas.height = viewport.height;
+        const page = await pdf.getPage(1); // Only showing first page for now
+        if (!isActive) return;
 
-      const renderContext = {
-        canvasContext: context,
-        viewport: viewport,
-      };
-      await page.render(renderContext).promise;
-      
-    } catch (err) {
-      console.error('Error loading PDF:', err);
-    }
-  };
+        const viewport = page.getViewport({ scale: 1.5 });
+        if (!isActive) return;
 
-  const loadImage = () => {
-    const img = new Image();
-    img.crossOrigin = 'anonymous';
-    img.onload = () => {
-      setCanvasSize({ width: img.naturalWidth, height: img.naturalHeight });
-      
-      const canvas = canvasRef.current;
-      if (!canvas) return;
-      const context = canvas.getContext('2d');
-      if (!context) return;
-      
-      canvas.width = img.naturalWidth;
-      canvas.height = img.naturalHeight;
-      context.drawImage(img, 0, 0);
+        setCanvasSize({ width: viewport.width, height: viewport.height });
+
+        const currentCanvas = canvasRef.current;
+        if (!currentCanvas) return;
+        const context = currentCanvas.getContext('2d');
+        if (!context) return;
+
+        currentCanvas.width = viewport.width;
+        currentCanvas.height = viewport.height;
+
+        const renderContext = {
+          canvasContext: context,
+          viewport: viewport,
+        };
+        
+        renderTask = page.render(renderContext);
+        await renderTask.promise;
+
+      } catch (err: any) {
+        if (err.name === 'RenderingCancelledException') return;
+        if (!isActive) return;
+        console.warn('PDF load failed, falling back to image loader...', err);
+        // Fallback in case the file is actually an image disguised with a .pdf extension
+        loadImage(url);
+      }
     };
-    img.src = fileUrl;
-  };
+
+    const loadImage = (url: string) => {
+      const img = new Image();
+      img.crossOrigin = 'anonymous';
+      img.onload = () => {
+        if (!isActive) return;
+        setCanvasSize({ width: img.naturalWidth, height: img.naturalHeight });
+
+        const currentCanvas = canvasRef.current;
+        if (!currentCanvas) return;
+        const context = currentCanvas.getContext('2d');
+        if (!context) return;
+
+        currentCanvas.width = img.naturalWidth;
+        currentCanvas.height = img.naturalHeight;
+        context.drawImage(img, 0, 0);
+      };
+      img.onerror = () => {
+        if (!isActive) return;
+        console.error('Error loading image fallback:', url);
+        setError('Impossible de charger le document.');
+      };
+      img.src = url;
+    };
+
+    if (isPdfFile) {
+      loadPdf(fileUrl);
+    } else {
+      loadImage(fileUrl);
+    }
+
+    return () => {
+      isActive = false;
+      if (renderTask) {
+        try { renderTask.cancel(); } catch (e) {}
+      }
+      if (loadingTask) {
+        try { loadingTask.destroy(); } catch (e) {}
+      }
+    };
+  }, [fileUrl]);
 
   // Resize handler to match container width
   useEffect(() => {
@@ -80,7 +125,7 @@ export const PdfViewer: React.FC<PdfViewerProps> = ({ fileUrl, bboxes, highlight
       if (containerRef.current && canvasSize.width > 0) {
         const containerWidth = containerRef.current.clientWidth;
         // Padding
-        const availableWidth = containerWidth - 32; 
+        const availableWidth = containerWidth - 32;
         const newScale = availableWidth / canvasSize.width;
         setScale(newScale > 0 ? newScale : 1);
       }
@@ -106,13 +151,27 @@ export const PdfViewer: React.FC<PdfViewerProps> = ({ fileUrl, bboxes, highlight
       // ── Coordinate mapping ratio ──────────────────────────────────────
       // OCR bbox coords are in the original image's pixel space.
       // We need to convert them to the rendered canvas pixel space.
-      //
-      // scaleX = canvasRenderedWidth / ocrOriginalImageWidth
-      // scaleY = canvasRenderedHeight / ocrOriginalImageHeight
-      //
-      // If we don't have ocrImageSize, fall back to 1:1 (no scaling).
-      const ratioX = ocrImageSize ? canvasSize.width / ocrImageSize.width : 1;
-      const ratioY = ocrImageSize ? canvasSize.height / ocrImageSize.height : 1;
+      let ratioX = 1;
+      let ratioY = 1;
+
+      if (ocrImageSize && ocrImageSize.width > 0 && ocrImageSize.height > 0) {
+        let ocrW = ocrImageSize.width;
+        let ocrH = ocrImageSize.height;
+
+        // Detect EXIF rotation / PDF internal rotation mismatch.
+        // If the canvas aspect ratio is flipped compared to the reported OCR image size,
+        // it means the OCR backend or PDF.js auto-rotated the image, so we must swap dimensions.
+        const canvasIsLandscape = canvasSize.width > canvasSize.height;
+        const ocrIsLandscape = ocrW > ocrH;
+
+        if (canvasIsLandscape !== ocrIsLandscape) {
+          ocrW = ocrImageSize.height;
+          ocrH = ocrImageSize.width;
+        }
+
+        ratioX = canvasSize.width / ocrW;
+        ratioY = canvasSize.height / ocrH;
+      }
 
       console.log('[PdfViewer] Coordinate mapping:', {
         ocrImageSize,
@@ -125,7 +184,7 @@ export const PdfViewer: React.FC<PdfViewerProps> = ({ fileUrl, bboxes, highlight
       highlightedIndices.forEach(idx => {
         const bbox = bboxes[idx];
         if (!bbox || bbox.length < 4) return;
-        
+
         // Map each point from OCR space → canvas space
         const mappedBbox = bbox.map(([x, y]) => [x * ratioX, y * ratioY]);
 
@@ -135,10 +194,11 @@ export const PdfViewer: React.FC<PdfViewerProps> = ({ fileUrl, bboxes, highlight
         ctx.lineTo(mappedBbox[2][0], mappedBbox[2][1]);
         ctx.lineTo(mappedBbox[3][0], mappedBbox[3][1]);
         ctx.closePath();
-        
-        ctx.fillStyle = 'rgba(16, 185, 129, 0.4)'; // Emerald 500 with opacity
+
+        // Use accent color (C0571A) with transparency for highlights
+        ctx.fillStyle = 'rgba(192, 87, 26, 0.25)';
         ctx.fill();
-        ctx.strokeStyle = 'rgba(16, 185, 129, 0.8)';
+        ctx.strokeStyle = 'rgba(192, 87, 26, 0.7)';
         ctx.lineWidth = 2;
         ctx.stroke();
       });
@@ -158,50 +218,37 @@ export const PdfViewer: React.FC<PdfViewerProps> = ({ fileUrl, bboxes, highlight
   }, [highlightedIndices, bboxes, canvasSize, scale, ocrImageSize]);
 
   return (
-    <div 
-      ref={containerRef} 
-      className="pdf-viewer-container"
-      style={{ 
-        width: '100%', 
-        height: '100%', 
-        overflow: 'auto',
-        position: 'relative',
-        backgroundColor: '#18181b', // zinc-900
-        borderRadius: '12px',
-        padding: '16px',
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center'
-      }}
+    <div
+      ref={containerRef}
+      className="w-full h-full overflow-auto relative bg-[#F5F7F6] p-4 flex flex-col items-center"
     >
-      <div 
-        className="canvas-wrapper" 
+      <div
         style={{
-          position: 'relative',
-          transform: `scale(${scale})`,
-          transformOrigin: 'top center',
-          width: canvasSize.width,
-          height: canvasSize.height,
+          width: canvasSize.width * scale,
+          height: canvasSize.height * scale,
+          position: 'relative'
         }}
       >
-        <canvas 
-          ref={canvasRef} 
-          style={{ 
-            position: 'absolute', 
-            top: 0, 
+        <div
+          style={{
+            position: 'absolute',
+            top: 0,
             left: 0,
-            boxShadow: '0 4px 20px rgba(0,0,0,0.5)'
-          }} 
-        />
-        <canvas 
-          ref={highlightCanvasRef} 
-          style={{ 
-            position: 'absolute', 
-            top: 0, 
-            left: 0,
-            pointerEvents: 'none'
-          }} 
-        />
+            transform: `scale(${scale})`,
+            transformOrigin: 'top left',
+            width: canvasSize.width,
+            height: canvasSize.height,
+          }}
+        >
+          <canvas
+            ref={canvasRef}
+            className="absolute top-0 left-0 shadow-lg rounded-xl"
+          />
+          <canvas
+            ref={highlightCanvasRef}
+            className="absolute top-0 left-0 pointer-events-none"
+          />
+        </div>
       </div>
     </div>
   );

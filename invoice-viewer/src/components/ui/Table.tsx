@@ -1,3 +1,4 @@
+// See DESIGN_RULES.md before editing this file.
 import React from 'react';
 
 interface Column<T> {
@@ -13,22 +14,34 @@ interface TableProps<T> {
   emptyMessage?: string;
 }
 
+const alignClass: Record<string, string> = {
+  left: 'text-left',
+  center: 'text-center',
+  right: 'text-right',
+};
+
 export function Table<T>({ columns, data, emptyMessage = 'No data' }: TableProps<T>) {
   if (data.length === 0) {
     return (
-      <div className="table-empty">
-        <p>{emptyMessage}</p>
+      <div className="flex items-center justify-center py-10 px-4">
+        <p className="text-sm text-ink-muted">{emptyMessage}</p>
       </div>
     );
   }
 
   return (
-    <div className="table-wrapper">
-      <table className="table">
+    <div className="overflow-x-auto rounded-card border border-border-light">
+      <table className="w-full border-collapse">
         <thead>
-          <tr>
+          <tr className="border-b border-border-dark bg-paper-surface">
             {columns.map((col) => (
-              <th key={col.key} className={`table__th table__th--${col.align || 'left'}`}>
+              <th
+                key={col.key}
+                className={[
+                  'px-4 py-2.5 text-xs font-semibold text-ink-muted uppercase tracking-wide',
+                  alignClass[col.align || 'left'],
+                ].join(' ')}
+              >
                 {col.header}
               </th>
             ))}
@@ -36,11 +49,17 @@ export function Table<T>({ columns, data, emptyMessage = 'No data' }: TableProps
         </thead>
         <tbody>
           {data.map((item, rowIndex) => (
-            <tr key={rowIndex} className="table__row">
+            <tr
+              key={rowIndex}
+              className="border-b border-border-light last:border-b-0 transition-colors hover:bg-paper-surface/50"
+            >
               {columns.map((col) => (
                 <td
                   key={col.key}
-                  className={`table__td table__td--${col.align || 'left'}`}
+                  className={[
+                    'px-4 py-3 text-sm text-ink',
+                    alignClass[col.align || 'left'],
+                  ].join(' ')}
                 >
                   {col.render
                     ? col.render(item, rowIndex)

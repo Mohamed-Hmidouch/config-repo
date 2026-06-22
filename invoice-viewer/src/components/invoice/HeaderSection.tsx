@@ -1,3 +1,4 @@
+// See DESIGN_RULES.md before editing this file.
 import React from 'react';
 import { Card } from '../ui/Card';
 import { ConfidenceBadge } from './ConfidenceBadge';
@@ -15,23 +16,27 @@ export const HeaderSection: React.FC<HeaderSectionProps> = ({
   confidence,
 }) => {
   return (
-    <Card className="header-section">
-      <div className="header-section__content">
-        <div className="header-section__identity">
-          <div className="header-section__number">
-            <span className="header-section__label">Facture N°</span>
-            <span className="header-section__value">
+    <Card>
+      <div className="flex items-center justify-between gap-4">
+        <div className="flex items-center gap-8">
+          <div>
+            <span className="block text-xs font-medium text-ink-muted uppercase tracking-wide">
+              Facture N°
+            </span>
+            <span className="block text-sm font-normal text-ink mt-0.5">
               {invoiceNumber || '—'}
             </span>
           </div>
-          <div className="header-section__date">
-            <span className="header-section__label">Date</span>
-            <span className="header-section__value">
+          <div>
+            <span className="block text-xs font-medium text-ink-muted uppercase tracking-wide">
+              Date
+            </span>
+            <span className="block text-sm font-normal text-ink mt-0.5">
               {formatDate(date)}
             </span>
           </div>
         </div>
-        <div className="header-section__confidence">
+        <div className="shrink-0">
           <ConfidenceBadge score={confidence} />
         </div>
       </div>
