@@ -23,6 +23,8 @@ export const InvoiceSchema = z.object({
   total_amount_incl_tax: z.number().nullable().default(null),
   currency: z.string().nullable().default(null),
   confidence_score: z.number().default(0),
+  confirmed_by_user_id: z.number().nullable().default(null),
+  confirmed_at: z.string().nullable().default(null),
   items: z.array(InvoiceItemSchema).default([]),
   extra_data: z.record(z.string(), z.unknown()).default({}),
   ocr_data: z.record(z.string(), z.unknown()).nullable().optional(),

@@ -36,6 +36,8 @@ export interface InvoiceData {
   confidence_score: number;
   source_filename?: string;
   created_at?: string;
+  confirmed_by_user_id?: number | null;
+  confirmed_at?: string | null;
 
   // ── Tableau de lignes ──
   items: InvoiceItem[];
