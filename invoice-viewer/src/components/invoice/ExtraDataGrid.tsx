@@ -25,7 +25,7 @@ export const ExtraDataGrid: React.FC<ExtraDataGridProps> = ({
   return (
     <Card
       title="Donnees Supplementaires"
-      icon={<Paperclip size={18} weight="duotone" />}
+      icon={<Paperclip size={18} weight="light" />}
       headerAction={
         <Badge variant="info" size="sm">
           {entries.length} champ{entries.length > 1 ? 's' : ''}

@@ -48,22 +48,22 @@ export const PartiesSection: React.FC<PartiesSectionProps> = ({
   if (!hasAny) return null;
 
   return (
-    <Card title="Parties" icon={<Buildings size={18} weight="duotone" />}>
+    <Card title="Parties" icon={<Buildings size={18} weight="light" />}>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
         <PartyCard
           title="Fournisseur"
-          icon={<Buildings size={16} weight="duotone" />}
+          icon={<Buildings size={16} weight="light" />}
           name={supplierName}
           details={[{ label: 'ID Fiscal', value: supplierTaxId }]}
         />
         <PartyCard
           title="Destinataire"
-          icon={<Envelope size={16} weight="duotone" />}
+          icon={<Envelope size={16} weight="light" />}
           name={destinataire}
         />
         <PartyCard
           title="Importateur"
-          icon={<Boat size={16} weight="duotone" />}
+          icon={<Boat size={16} weight="light" />}
           name={importateur}
         />
       </div>

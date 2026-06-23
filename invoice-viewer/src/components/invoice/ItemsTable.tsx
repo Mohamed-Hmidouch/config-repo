@@ -15,10 +15,10 @@ interface ItemsTableProps {
 export const ItemsTable: React.FC<ItemsTableProps> = ({ items, currency }) => {
   if (items.length === 0) {
     return (
-      <Card title="Lignes de Facturation" icon={<Package size={18} weight="duotone" />}>
+      <Card title="Lignes de Facturation" icon={<Package size={18} weight="light" />}>
         <EmptyState
           message="Aucune ligne de facturation detectee"
-          icon={<Tray size={22} weight="duotone" />}
+          icon={<Tray size={22} weight="light" />}
           description="L'OCR n'a pas pu extraire les lignes detaillees de cette facture."
         />
       </Card>
@@ -86,7 +86,7 @@ export const ItemsTable: React.FC<ItemsTableProps> = ({ items, currency }) => {
   return (
     <Card
       title="Lignes de Facturation"
-      icon={<Package size={18} weight="duotone" />}
+      icon={<Package size={18} weight="light" />}
       headerAction={
         <span className="text-xs font-medium text-ink-muted">
           {items.length} ligne{items.length > 1 ? 's' : ''}

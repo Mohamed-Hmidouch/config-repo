@@ -68,7 +68,7 @@ export const AttributePanel: React.FC<AttributePanelProps> = ({ data, activeAttr
     <div className="h-full flex flex-col font-sans">
       <Card
         title="Attributs Extraits"
-        icon={<ListMagnifyingGlass size={18} weight="duotone" />}
+        icon={<ListMagnifyingGlass size={18} weight="light" />}
         className="flex-1 flex flex-col border-0 shadow-none rounded-none bg-transparent"
       >
         <div className="flex-1 overflow-y-auto space-y-5 pb-4">

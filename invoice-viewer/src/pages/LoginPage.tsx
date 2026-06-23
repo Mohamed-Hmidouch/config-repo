@@ -37,56 +37,56 @@ export const LoginPage: React.FC = () => {
       login(data.access_token);
       navigate('/');
     } catch (err) {
-      setError('Invalid username or password');
+      setError("Nom d'utilisateur ou mot de passe invalide");
     } finally {
       setIsLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen bg-[#F3F1EC] flex items-center justify-center font-sans p-6">
-      <div className="bg-white rounded-[32px] p-10 w-full max-w-md shadow-lg border border-gray-100">
-        <div className="w-16 h-16 bg-[#F5F7F6] rounded-2xl flex items-center justify-center mb-6 text-[#1F2937]">
-          <LockKey size={32} weight="duotone" />
+    <div className="min-h-screen bg-[#F8FAFC] flex items-center justify-center font-sans p-6">
+      <div className="bg-white rounded-xl p-10 w-full max-w-md shadow-lg border border-gray-100">
+        <div className="w-16 h-16 bg-[#0EA5E9]/10 rounded-lg flex items-center justify-center mb-6 text-[#0EA5E9]">
+          <LockKey size={32} weight="bold" />
         </div>
-        <h1 className="text-3xl font-bold text-[#1F2937] mb-2">Welcome Back</h1>
-        <p className="text-gray-500 mb-8 font-medium">Please sign in to confirm invoices.</p>
+        <h1 className="text-3xl font-bold text-[#0EA5E9] mb-2">Bon retour</h1>
+        <p className="text-gray-500 mb-8 font-medium">Veuillez vous connecter pour valider les factures.</p>
 
         {error && (
-          <div className="bg-red-50 text-red-600 p-4 rounded-2xl mb-6 font-medium text-sm">
+          <div className="bg-red-50 text-red-600 p-4 rounded-lg mb-6 font-medium text-sm">
             {error}
           </div>
         )}
 
         <form onSubmit={handleLogin} className="space-y-5">
           <div>
-            <label className="block text-sm font-bold text-[#1F2937] mb-2">Username</label>
+            <label className="block text-sm font-bold text-slate-700 mb-2">Nom d'utilisateur</label>
             <div className="relative">
-              <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-400">
-                <User size={20} weight="fill" />
+              <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400">
+                <User size={20} weight="bold" />
               </div>
               <input
                 type="text"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
-                className="w-full bg-[#F5F7F6] border-2 border-transparent focus:border-[#D97757] focus:bg-white rounded-2xl py-4 pl-12 pr-4 text-[#1F2937] font-medium outline-none transition-all"
-                placeholder="Enter your username"
+                className="w-full bg-[#FFFFFF] border-2 border-transparent focus:border-[#0EA5E9] focus:bg-white rounded-lg py-4 pl-12 pr-4 text-slate-800 font-medium outline-none transition-all shadow-sm"
+                placeholder="Entrez votre nom d'utilisateur"
                 required
               />
             </div>
           </div>
 
           <div>
-            <label className="block text-sm font-bold text-[#1F2937] mb-2">Password</label>
+            <label className="block text-sm font-bold text-slate-700 mb-2">Mot de passe</label>
             <div className="relative">
-              <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-400">
-                <LockKey size={20} weight="fill" />
+              <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400">
+                <LockKey size={20} weight="bold" />
               </div>
               <input
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full bg-[#F5F7F6] border-2 border-transparent focus:border-[#D97757] focus:bg-white rounded-2xl py-4 pl-12 pr-4 text-[#1F2937] font-medium outline-none transition-all"
+                className="w-full bg-[#FFFFFF] border-2 border-transparent focus:border-[#0EA5E9] focus:bg-white rounded-lg py-4 pl-12 pr-4 text-slate-800 font-medium outline-none transition-all shadow-sm"
                 placeholder="••••••••"
                 required
               />
@@ -96,9 +96,9 @@ export const LoginPage: React.FC = () => {
           <button
             type="submit"
             disabled={isLoading}
-            className="w-full bg-[#1F2937] hover:bg-black text-white font-bold rounded-2xl py-4 transition-colors flex items-center justify-center gap-2 mt-4 disabled:opacity-70 disabled:cursor-not-allowed"
+            className="w-full bg-[#0EA5E9] hover:bg-[#0284C7] text-white font-bold rounded-lg py-4 transition-colors flex items-center justify-center gap-2 mt-4 disabled:opacity-70 disabled:cursor-not-allowed shadow-sm"
           >
-            {isLoading ? <CircleNotch size={24} className="animate-spin" /> : 'Sign In'}
+            {isLoading ? <CircleNotch size={24} className="animate-spin" /> : 'Se connecter'}
           </button>
         </form>
       </div>

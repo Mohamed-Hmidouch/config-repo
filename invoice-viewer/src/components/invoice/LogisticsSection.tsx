@@ -18,13 +18,13 @@ export const LogisticsSection: React.FC<LogisticsSectionProps> = ({
   if (!hasAny) return null;
 
   const fields = [
-    { label: 'Port', value: port, icon: <Anchor size={18} weight="duotone" /> },
-    { label: 'Moyen de Transport', value: moyenTransport, icon: <Truck size={18} weight="duotone" /> },
-    { label: 'Incoterm', value: incoterm, icon: <ClipboardText size={18} weight="duotone" /> },
+    { label: 'Port', value: port, icon: <Anchor size={18} weight="light" /> },
+    { label: 'Moyen de Transport', value: moyenTransport, icon: <Truck size={18} weight="light" /> },
+    { label: 'Incoterm', value: incoterm, icon: <ClipboardText size={18} weight="light" /> },
   ].filter((f) => f.value);
 
   return (
-    <Card title="Logistique" icon={<Globe size={18} weight="duotone" />}>
+    <Card title="Logistique" icon={<Globe size={18} weight="light" />}>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
         {fields.map((field) => (
           <div

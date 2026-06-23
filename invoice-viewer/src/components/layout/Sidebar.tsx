@@ -15,7 +15,7 @@ export const Sidebar: React.FC = () => {
       <div className="flex items-center justify-between px-4 py-4">
         <div className="flex items-center gap-2">
           <div className="flex items-center justify-center w-7 h-7 rounded bg-accent text-white">
-            <Lightning size={18} weight="fill" />
+            <Lightning size={18} weight="light" />
           </div>
           <span className="text-sm font-semibold text-ink tracking-tight">
             InvoiceView
@@ -33,7 +33,7 @@ export const Sidebar: React.FC = () => {
           end
           className={({ isActive }) => (isActive ? linkActive : linkBase)}
         >
-          <Receipt size={18} weight="duotone" />
+          <Receipt size={18} weight="light" />
           <span>Factures</span>
         </NavLink>
 
@@ -41,7 +41,7 @@ export const Sidebar: React.FC = () => {
           to="/upload"
           className={({ isActive }) => (isActive ? linkActive : linkBase)}
         >
-          <UploadSimple size={18} weight="duotone" />
+          <UploadSimple size={18} weight="light" />
           <span>Importer</span>
         </NavLink>
       </nav>
@@ -50,7 +50,7 @@ export const Sidebar: React.FC = () => {
       <div className="px-4 py-4 border-t border-border-light">
         <div className="flex items-center gap-2.5">
           <span className="text-ink-muted">
-            <Database size={18} weight="duotone" />
+            <Database size={18} weight="light" />
           </span>
           <div>
             <p className="text-xs font-medium text-ink">Data-Driven UI</p>

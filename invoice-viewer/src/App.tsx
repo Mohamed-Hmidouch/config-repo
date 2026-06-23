@@ -5,7 +5,8 @@ import { UploadPage } from './pages/UploadPage';
 import { LoginPage } from './pages/LoginPage';
 import { AuthProvider, useAuth } from './context/AuthContext';
 
-const ProtectedRoute = ({ children }: { children: JSX.Element }) => {
+import { ReactNode } from 'react';
+const ProtectedRoute = ({ children }: { children: ReactNode }) => {
   const { isAuthenticated } = useAuth();
   if (!isAuthenticated) {
     return <Navigate to="/login" replace />;
@@ -17,7 +18,7 @@ function App() {
   return (
     <AuthProvider>
       <BrowserRouter>
-        <div className="min-h-screen bg-[#F5F7F6] font-sans antialiased text-[#1A252A]">
+        <div className="min-h-screen bg-[#FFFFFF] font-sans antialiased text-[#1F2937]">
           <Routes>
             <Route path="/login" element={<LoginPage />} />
             <Route path="/" element={<ProtectedRoute><InvoiceListPage /></ProtectedRoute>} />

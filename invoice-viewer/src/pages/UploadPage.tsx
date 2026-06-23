@@ -56,7 +56,7 @@ export const UploadPage: React.FC = () => {
   const handleFile = useCallback((f: File) => {
     const ext = '.' + f.name.split('.').pop()?.toLowerCase();
     if (!ALLOWED_TYPES.includes(f.type) && !ALLOWED_EXTENSIONS.includes(ext)) {
-      setError(`Unsupported format. Accepted: ${ALLOWED_EXTENSIONS.join(', ')}`);
+      setError(`Format non supporté. Acceptés : ${ALLOWED_EXTENSIONS.join(', ')}`);
       setState('error');
       return;
     }
@@ -113,7 +113,7 @@ export const UploadPage: React.FC = () => {
 
       if (!response.ok) {
         const data = await response.json().catch(() => null);
-        throw new Error(data?.detail || `Server error (${response.status})`);
+        throw new Error(data?.detail || `Erreur serveur (${response.status})`);
       }
 
       const data = await response.json();
@@ -126,7 +126,7 @@ export const UploadPage: React.FC = () => {
       });
       setState('success');
     } catch (err: unknown) {
-      const message = err instanceof Error ? err.message : 'Unknown error';
+      const message = err instanceof Error ? err.message : 'Erreur inconnue';
       setError(message);
       setState('error');
     }
@@ -146,43 +146,43 @@ export const UploadPage: React.FC = () => {
   // ── Success state ──
   if (state === 'success' && result) {
     return (
-      <div className="min-h-screen bg-[#F3F1EC] font-sans flex flex-col items-center justify-center p-6">
-        <div className="w-full max-w-[600px] bg-white rounded-[40px] shadow-lg overflow-hidden border border-gray-100">
-          <div className="bg-[#D97757] p-10 text-center relative text-white">
-            <div className="w-20 h-20 bg-white rounded-full flex items-center justify-center mx-auto mb-6 shadow-md text-[#D97757]">
-              <CheckCircle size={40} weight="fill" />
+      <div className="min-h-screen bg-[#F8FAFC] font-sans flex flex-col items-center justify-center p-6">
+        <div className="w-full max-w-[600px] bg-white rounded-xl shadow-lg overflow-hidden border border-gray-100">
+          <div className="bg-[#0EA5E9] p-10 text-center relative text-white">
+            <div className="w-20 h-20 bg-white rounded-full flex items-center justify-center mx-auto mb-6 shadow-md text-[#0EA5E9]">
+              <CheckCircle size={40} weight="light" />
             </div>
-            <h2 className="text-3xl font-bold mb-2">Extraction Successful</h2>
-            <p className="text-green-100 font-medium">Your invoice has been processed and saved securely.</p>
+            <h2 className="text-3xl font-bold mb-2">Extraction Réussie</h2>
+            <p className="text-sky-100 font-medium">Votre facture a été traitée et sauvegardée de manière sécurisée.</p>
           </div>
 
           <div className="p-10 space-y-4">
-            <div className="flex items-center gap-4 bg-[#F5F7F6] border border-gray-100 rounded-[24px] p-4">
-              <div className="w-12 h-12 bg-white rounded-[16px] flex items-center justify-center text-gray-500 shrink-0">
-                <FileText size={24} weight="duotone" />
+            <div className="flex items-center gap-4 bg-[#FFFFFF] border border-gray-100 rounded-lg p-4">
+              <div className="w-12 h-12 bg-white rounded-lg flex items-center justify-center text-gray-500 shrink-0">
+                <FileText size={24} weight="light" />
               </div>
               <div className="flex-1">
-                <p className="font-bold text-[#1F2937]">Invoice Number</p>
+                <p className="font-bold text-[#1F2937]">Numéro de Facture</p>
                 <p className="text-sm font-medium text-gray-500">{result.invoice_number || 'N/A'}</p>
               </div>
             </div>
 
-            <div className="flex items-center gap-4 bg-[#F5F7F6] border border-gray-100 rounded-[24px] p-4">
-              <div className="w-12 h-12 bg-white rounded-[16px] flex items-center justify-center text-gray-500 shrink-0">
-                <FileText size={24} weight="duotone" />
+            <div className="flex items-center gap-4 bg-[#FFFFFF] border border-gray-100 rounded-lg p-4">
+              <div className="w-12 h-12 bg-white rounded-lg flex items-center justify-center text-gray-500 shrink-0">
+                <FileText size={24} weight="light" />
               </div>
               <div className="flex-1">
-                <p className="font-bold text-[#1F2937]">Supplier</p>
+                <p className="font-bold text-[#1F2937]">Fournisseur</p>
                 <p className="text-sm font-medium text-gray-500">{result.supplier_name || 'N/A'}</p>
               </div>
             </div>
 
-            <div className="flex items-center gap-4 bg-[#F5F7F6] border border-gray-100 rounded-[24px] p-4">
-              <div className="w-12 h-12 bg-white rounded-[16px] flex items-center justify-center text-[#D97757] shrink-0">
-                <FileText size={24} weight="duotone" />
+            <div className="flex items-center gap-4 bg-[#FFFFFF] border border-gray-100 rounded-lg p-4">
+              <div className="w-12 h-12 bg-white rounded-lg flex items-center justify-center text-[#0EA5E9] shrink-0">
+                <FileText size={24} weight="light" />
               </div>
               <div className="flex-1">
-                <p className="font-bold text-[#1F2937]">Total Amount</p>
+                <p className="font-bold text-[#1F2937]">Montant Total</p>
                 <p className="text-sm font-medium text-gray-500">
                   {result.total_amount_incl_tax != null
                     ? `${result.total_amount_incl_tax.toLocaleString('en-US', { minimumFractionDigits: 2 })} ${result.currency || ''}`
@@ -194,9 +194,9 @@ export const UploadPage: React.FC = () => {
             <div className="mt-8 flex gap-4 pt-4 border-t border-dashed border-gray-200">
               <button
                 onClick={() => navigate(`/invoice/${result.id}`)}
-                className="flex-1 bg-[#1F2937] text-white rounded-full py-4 font-bold shadow-md hover:bg-black transition-colors flex items-center justify-center gap-2"
+                className="flex-1 bg-[#0EA5E9] text-white rounded-full py-4 font-bold shadow-md hover:bg-[#0284C7] transition-colors flex items-center justify-center gap-2"
               >
-                Review Details <ArrowRight size={18} weight="bold" />
+                Voir les Détails <ArrowRight size={18} weight="bold" />
               </button>
               <button
                 onClick={reset}
@@ -214,33 +214,32 @@ export const UploadPage: React.FC = () => {
   // ── Processing state ──
   if (isProcessing) {
     return (
-      <div className="min-h-screen bg-[#F3F1EC] font-sans flex flex-col items-center justify-center p-6">
-        <div className="w-full max-w-[500px] bg-white rounded-[40px] shadow-lg p-12 text-center border border-gray-100">
-          <div className="w-24 h-24 bg-[#F3F1EC] rounded-full flex items-center justify-center mx-auto mb-8 relative">
-             <CircleNotch size={48} weight="bold" className="animate-spin text-[#D97757]" />
-             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-16 h-16 bg-white rounded-full flex items-center justify-center shadow-sm">
-                <Brain size={24} className="text-[#D97757]" weight="duotone" />
-             </div>
+      <div className="min-h-screen bg-[#F8FAFC] font-sans flex flex-col items-center justify-center p-6">
+        <div className="w-full max-w-[500px] bg-white rounded-xl shadow-lg p-12 text-center border border-gray-100">
+          <div className="w-24 h-24 bg-[#F8FAFC] rounded-full flex items-center justify-center mx-auto mb-8 relative">
+            <CircleNotch size={48} weight="bold" className="animate-spin text-[#0EA5E9]" />
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-16 h-16 bg-white rounded-full flex items-center justify-center shadow-sm">
+              <Brain size={24} className="text-[#0EA5E9]" weight="light" />
+            </div>
           </div>
 
           <h2 className="text-2xl font-bold text-[#1F2937] mb-2">
-            {state === 'uploading' ? 'Uploading...' : 'Extracting Data...'}
+            {state === 'uploading' ? 'Téléchargement...' : 'Extraction des données...'}
           </h2>
-          <p className="text-gray-500 font-medium mb-10">Please wait while our AI engine analyzes your document.</p>
+          <p className="text-gray-500 font-medium mb-10">Veuillez patienter pendant que notre IA analyse votre document.</p>
 
           <div className="space-y-6 text-left">
             {[
-              { label: 'Secure Transfer', done: state === 'processing', icon: <CloudArrowUp size={20} weight="bold" /> },
-              { label: 'Document Scanning', done: false, active: state === 'processing', icon: <Scan size={20} weight="bold" /> },
+              { label: 'Transfert Sécurisé', done: state === 'processing', icon: <CloudArrowUp size={20} weight="bold" /> },
+              { label: 'Analyse du Document', done: false, active: state === 'processing', icon: <Scan size={20} weight="bold" /> },
               { label: 'OCR & Classification', done: false, icon: <Brain size={20} weight="bold" /> },
             ].map((step, i) => (
-              <div key={i} className="flex items-center gap-4 bg-[#F5F7F6] p-4 rounded-[20px] border border-transparent transition-colors">
-                <div className={`w-10 h-10 rounded-full flex items-center justify-center shrink-0 ${
-                  step.done ? 'bg-[#D97757] text-white' : step.active ? 'bg-white text-[#1F2937] border-2 border-[#D97757]' : 'bg-white text-gray-400'
-                }`}>
+              <div key={i} className="flex items-center gap-4 bg-[#FFFFFF] p-4 rounded-[20px] border border-transparent transition-colors">
+                <div className={`w-10 h-10 rounded-full flex items-center justify-center shrink-0 ${step.done ? 'bg-[#0EA5E9] text-white' : step.active ? 'bg-white text-[#1F2937] border-2 border-[#0EA5E9]' : 'bg-white text-gray-400'
+                  }`}>
                   {step.done ? <CheckCircle size={20} weight="bold" /> : step.icon}
                 </div>
-                <span className={`font-bold ${step.done ? 'text-[#D97757]' : step.active ? 'text-[#1F2937]' : 'text-gray-400'}`}>
+                <span className={`font-bold ${step.done ? 'text-[#0EA5E9]' : step.active ? 'text-[#1F2937]' : 'text-gray-400'}`}>
                   {step.label}
                 </span>
               </div>
@@ -252,34 +251,41 @@ export const UploadPage: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-[#F3F1EC] font-sans flex flex-col items-center pb-20">
-      
-      <div className="w-full max-w-[1000px] px-6">
-        
+    <div className="min-h-screen bg-gradient-to-br from-[#F8FAFC] to-sky-50 font-sans flex flex-col items-center pb-20 relative overflow-hidden isolate">
+      {/* ── IMMERSIVE PAGE BACKGROUND ── */}
+      <div className="fixed top-0 left-0 w-[800px] h-[800px] bg-sky-200 rounded-full blur-[150px] opacity-60 mix-blend-multiply pointer-events-none -z-10 -translate-x-1/2 -translate-y-1/2"></div>
+      <div className="fixed bottom-0 right-0 w-[600px] h-[600px] bg-sky-300 rounded-full blur-[120px] opacity-40 mix-blend-multiply pointer-events-none -z-10 translate-x-1/3 translate-y-1/3"></div>
+
+      <div className="w-full max-w-[1000px] px-6 relative z-10">
+
         {/* ── HEADER BAR ── */}
         <div className="pt-12 pb-6 flex items-center justify-between mb-4">
-          <button 
+          <button
             onClick={() => navigate('/')}
-            className="w-12 h-12 bg-white rounded-2xl shadow-sm border border-gray-100 flex items-center justify-center text-[#1F2937] hover:bg-gray-50 transition-all active:scale-95"
+            className="w-12 h-12 bg-white rounded-lg shadow-sm border border-gray-100 flex items-center justify-center text-[#1F2937] hover:bg-gray-50 transition-all active:scale-95"
           >
             <CaretLeft size={24} weight="bold" />
           </button>
           <div className="bg-white rounded-full px-6 py-2 shadow-sm border border-gray-100">
-            <span className="font-bold text-[#D97757] text-sm tracking-widest uppercase">Smart Upload</span>
+            <span className="font-bold text-[#0EA5E9] text-sm tracking-widest uppercase">Téléchargement Intelligent</span>
           </div>
         </div>
 
-        <div className="bg-[#D97757] rounded-[40px] p-10 text-white relative overflow-hidden shadow-lg mb-10 text-center">
+        <div className="relative w-full rounded-3xl overflow-hidden mb-12 shadow-[0_8px_30px_rgb(0,0,0,0.04)] bg-gradient-to-br from-sky-50 to-white border border-sky-100 isolate mt-4 text-center p-14">
+          {/* Abstract Background Elements */}
+          <div className="absolute top-0 right-0 w-[400px] h-[400px] bg-sky-300 rounded-full blur-[80px] opacity-40 mix-blend-multiply -z-10 translate-x-1/3 -translate-y-1/2 pointer-events-none"></div>
+          <div className="absolute bottom-0 left-0 w-[300px] h-[300px] bg-sky-400 rounded-full blur-[60px] opacity-20 -z-10 -translate-x-1/2 translate-y-1/2 pointer-events-none"></div>
+
           <div className="relative z-10">
-            <h1 className="text-4xl font-bold mb-4">New Document</h1>
-            <p className="text-green-100 font-medium text-lg max-w-md mx-auto">
-              Upload a PDF or Image invoice for automatic OCR data extraction.
+            <h1 className="text-5xl font-galatia text-slate-800 tracking-tight mb-4">Nouveau Document</h1>
+            <p className="text-slate-500 font-medium text-lg max-w-md mx-auto">
+              Téléchargez une facture (PDF ou Image) pour l'extraction automatique par OCR.
             </p>
           </div>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          
+
           {/* ── DROPZONE ── */}
           <div className="col-span-1">
             <div
@@ -287,13 +293,12 @@ export const UploadPage: React.FC = () => {
               onDragOver={onDragOver}
               onDragLeave={onDragLeave}
               onClick={() => fileInputRef.current?.click()}
-              className={`group relative cursor-pointer rounded-[40px] border-4 border-dashed p-12 text-center transition-all duration-300 min-h-[400px] flex flex-col items-center justify-center shadow-sm ${
-                dragOver
-                  ? 'border-[#D97757] bg-[#D97757]/5'
+              className={`group relative cursor-pointer rounded-2xl border-4 border-dashed p-12 text-center transition-all duration-300 min-h-[400px] flex flex-col items-center justify-center backdrop-blur-xl ${dragOver
+                  ? 'border-[#0EA5E9] bg-[#0EA5E9]/10'
                   : file
-                    ? 'border-[#D97757]/50 bg-white'
-                    : 'border-gray-200 bg-white hover:border-[#D97757]/30'
-              }`}
+                    ? 'border-white/50 bg-white/60'
+                    : 'border-white/60 bg-white/40 hover:border-sky-300/60 hover:bg-white/60'
+                }`}
             >
               <input
                 ref={fileInputRef}
@@ -303,15 +308,15 @@ export const UploadPage: React.FC = () => {
                 className="hidden"
               />
 
-              <div className={`w-24 h-24 rounded-[24px] flex items-center justify-center mb-6 transition-colors ${file ? 'bg-[#F3F1EC] text-[#D97757]' : 'bg-gray-100 text-gray-400 group-hover:bg-[#F3F1EC] group-hover:text-[#D97757]'}`}>
+              <div className={`w-24 h-24 rounded-lg flex items-center justify-center mb-6 transition-colors ${file ? 'bg-[#F8FAFC] text-[#0EA5E9]' : 'bg-gray-100 text-gray-400 group-hover:bg-[#F8FAFC] group-hover:text-[#0EA5E9]'}`}>
                 {file ? (
                   file.type === 'application/pdf' ? (
-                    <FilePdf size={48} weight="duotone" />
+                    <FilePdf size={48} weight="light" />
                   ) : (
-                    <Image size={48} weight="duotone" />
+                    <Image size={48} weight="light" />
                   )
                 ) : (
-                  <UploadSimple size={48} weight="duotone" />
+                  <UploadSimple size={48} weight="light" />
                 )}
               </div>
 
@@ -319,16 +324,16 @@ export const UploadPage: React.FC = () => {
                 <>
                   <p className="text-xl font-bold text-[#1F2937] mb-2 px-4 truncate max-w-full">{file.name}</p>
                   <p className="text-sm font-medium text-gray-500">
-                    {(file.size / 1024).toFixed(0)} KB - Click to replace
+                    {(file.size / 1024).toFixed(0)} KB - Cliquez pour remplacer
                   </p>
                 </>
               ) : (
                 <>
                   <p className="text-xl font-bold text-[#1F2937] mb-2">
-                    Drag your invoice here
+                    Glissez votre facture ici
                   </p>
                   <p className="text-sm font-medium text-gray-500">
-                    or click to browse from device
+                    ou cliquez pour parcourir
                   </p>
                 </>
               )}
@@ -338,15 +343,15 @@ export const UploadPage: React.FC = () => {
                   <img
                     src={preview}
                     alt="Preview"
-                    className="w-full h-full object-contain rounded-[32px]"
+                    className="w-full h-full object-contain rounded-xl"
                   />
                 </div>
               )}
             </div>
 
             {state === 'error' && error && (
-              <div className="mt-6 flex items-start gap-4 rounded-[24px] bg-red-50 p-6">
-                <WarningCircle size={24} weight="duotone" className="text-red-500 shrink-0" />
+              <div className="mt-6 flex items-start gap-4 rounded-lg bg-red-50 p-6">
+                <WarningCircle size={24} weight="light" className="text-red-500 shrink-0" />
                 <p className="text-sm font-bold text-red-700 leading-relaxed">{error}</p>
               </div>
             )}
@@ -354,43 +359,43 @@ export const UploadPage: React.FC = () => {
 
           {/* ── ACTION COLUMN ── */}
           <div className="col-span-1 flex flex-col justify-center">
-            
-            <div className="bg-white rounded-[40px] shadow-sm border border-gray-100 p-10 flex flex-col items-center text-center">
-              <h3 className="text-xl font-bold text-[#1F2937] mb-4">Ready to Process</h3>
-              <p className="text-gray-500 font-medium mb-8">
-                Our engine supports PDF, JPG, PNG, TIFF, and WebP formats. Make sure the document is legible for best results.
+
+            <div className="bg-white/60 backdrop-blur-xl rounded-2xl shadow-lg border border-white/60 p-10 flex flex-col items-center text-center">
+              <h3 className="text-xl font-bold text-slate-800 mb-4">Prêt au traitement</h3>
+              <p className="text-slate-500 font-medium mb-8">
+                Notre moteur prend en charge les formats PDF, JPG, PNG, TIFF et WebP. Assurez-vous que le document est lisible.
               </p>
 
               {file && state !== 'error' ? (
                 <button
                   onClick={handleUpload}
-                  className="w-full bg-[#1F2937] text-white rounded-full py-5 text-lg font-bold shadow-lg hover:bg-black transition-colors flex items-center justify-center gap-3"
+                  className="w-full bg-[#0EA5E9] text-white rounded-full py-5 text-lg font-bold shadow-lg hover:bg-[#0284C7] transition-colors flex items-center justify-center gap-3"
                 >
                   <CloudArrowUp size={24} weight="bold" />
-                  Process Document
+                  Traiter le Document
                 </button>
               ) : state === 'error' && file ? (
                 <div className="w-full flex gap-4">
                   <button
                     onClick={handleUpload}
-                    className="flex-1 bg-[#D97757] text-white rounded-full py-4 font-bold shadow-md hover:bg-[#0EA5E9] transition-colors flex items-center justify-center gap-2"
+                    className="flex-1 bg-[#0EA5E9] text-white rounded-full py-4 font-bold shadow-md hover:bg-[#0284C7] transition-colors flex items-center justify-center gap-2"
                   >
-                    <ArrowCounterClockwise size={20} /> Retry
+                    <ArrowCounterClockwise size={20} /> Réessayer
                   </button>
                   <button
                     onClick={reset}
                     className="flex items-center justify-center gap-2 rounded-full bg-gray-100 px-6 py-4 font-bold text-gray-600 hover:bg-gray-200 transition-colors"
                   >
-                    <X size={20} /> Cancel
+                    <X size={20} /> Annuler
                   </button>
                 </div>
               ) : (
                 <button
                   onClick={() => fileInputRef.current?.click()}
-                  className="w-full bg-[#D97757] text-white rounded-full py-5 text-lg font-bold shadow-lg hover:opacity-90 transition-opacity flex items-center justify-center gap-3"
+                  className="w-full bg-[#0EA5E9] text-white rounded-full py-5 text-lg font-bold shadow-lg hover:opacity-90 transition-opacity flex items-center justify-center gap-3"
                 >
                   <UploadSimple size={24} weight="bold" />
-                  Select File
+                  Sélectionner un fichier
                 </button>
               )}
             </div>

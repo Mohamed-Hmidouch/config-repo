@@ -220,7 +220,7 @@ export const PdfViewer: React.FC<PdfViewerProps> = ({ fileUrl, bboxes, highlight
   return (
     <div
       ref={containerRef}
-      className="w-full h-full overflow-auto relative bg-[#F5F7F6] p-4 flex flex-col items-center"
+      className="w-full h-full overflow-auto relative bg-[#FFFFFF] p-4 flex flex-col items-center"
     >
       <div
         style={{

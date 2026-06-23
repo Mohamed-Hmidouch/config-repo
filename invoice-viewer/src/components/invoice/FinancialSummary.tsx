@@ -28,7 +28,7 @@ export const FinancialSummary: React.FC<FinancialSummaryProps> = ({
   ].filter((r) => r.value !== null);
 
   return (
-    <Card title="Resume Financier" icon={<CurrencyDollar size={18} weight="duotone" />}>
+    <Card title="Resume Financier" icon={<CurrencyDollar size={18} weight="light" />}>
       <div className="space-y-0">
         {rows.map((row, i) => (
           <div

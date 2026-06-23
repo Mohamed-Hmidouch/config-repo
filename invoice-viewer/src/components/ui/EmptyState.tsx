@@ -16,7 +16,7 @@ export const EmptyState: React.FC<EmptyStateProps> = ({
   return (
     <div className="flex flex-col items-center justify-center gap-3 py-12 px-6">
       <span className="text-ink-muted">
-        {icon || <FileX size={22} weight="duotone" />}
+        {icon || <FileX size={22} weight="light" />}
       </span>
       <p className="text-sm font-medium text-ink">{message}</p>
       {description && (
